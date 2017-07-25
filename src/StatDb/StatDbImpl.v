@@ -19,8 +19,13 @@ Module StatDB.
       Ret tt.
 
     Definition mean : prog (option nat) :=
-      (* Your solutions here *)
-      Ret (Some 0).
+      count <- Prim vars (Read VarCount);
+      if 0 == count then
+        Ret None
+      else 
+        sum <- Prim vars (Read VarSum);
+        Ret (Some (Nat.div sum count)).
+
 
     Definition init : prog InitResult :=
       _ <- Prim vars (Write VarCount 0);
@@ -62,6 +67,20 @@ Module StatDB.
           intuition.
 
         + (* Prove that your implementation of [mean] refines StatDbAPI.man *)
+          lift_world. 
+          prog_spec_symbolic_execute inv_bg inv_step. 
+          unfold statdb_abstraction in *.
+
+
+          exists state'1. split. assumption. 
+          exists s. split.
+          apply step_mean_nonempty.
+
+          solve_final_state.
+          
+          unfold statdb_abstraction in *.
+          simpl in *.
+
           pocs_admit.
 
       - cannot_crash.
