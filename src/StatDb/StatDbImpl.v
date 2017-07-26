@@ -68,20 +68,19 @@ Module StatDB.
 
         + (* Prove that your implementation of [mean] refines StatDbAPI.man *)
           lift_world. 
-          prog_spec_symbolic_execute inv_bg inv_step. 
+          prog_spec_symbolic_execute inv_step. 
+
           unfold statdb_abstraction in *.
-
-
-          exists state'1. split. assumption. 
-          exists s. split.
-          apply step_mean_nonempty.
-
           solve_final_state.
-          
-          unfold statdb_abstraction in *.
-          simpl in *.
+          destruct s0.
+          rewrite H2 in H. 
+          apply length_zero_iff_nil. symmetry. assumption.
 
-          pocs_admit.
+          unfold statdb_abstraction in *.
+          solve_final_state.
+          destruct s0. apply neq_0_lt. unfold not. intros.
+          apply n. rewrite H. assumption.
+          destruct s0. auto.
 
       - cannot_crash.
       - eapply then_init_compose; eauto.
